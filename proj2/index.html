@@ -1,7 +1,257 @@
-<html>
-	<head>
-	</head>
-	<body>
-		Project 2 here
-	</body>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+  <style>
+    body {
+      padding: 100px;
+      width: 1000px;
+      margin: auto;
+      text-align: left;
+      font-weight: 300;
+      font-family: 'Open Sans', sans-serif;
+      color: #121212;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+      font-family: 'Source Sans Pro', sans-serif;
+    }
+  </style>
+  <title>CS 184 Mesh Editor</title>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Source+Sans+Pro" rel="stylesheet">
+</head>
+
+
+<body>
+
+  <h1 align="middle">CS 184: Computer Graphics and Imaging, Spring 2020</h1>
+  <h1 align="middle">Project 2: Mesh Editor</h1>
+  <h2 align="middle">Tian Liu, CS184-SP 2022</h2>
+
+  <br><br>
+
+  <div>
+
+    <h2 align="middle">Overview</h2>
+    <p>What we've built on the project is a process trying to render smooth, curvy surfaces. We start
+      at first by trying to implement Bezier curves, then to Bezier surfaces which are indeed, smooth.
+      Later, as these curves took a substantial time to render, we therefore figured to use mesh triangles
+      to render the objects and therefore we started at the begginning of the implementation of such data structure.
+      This data structure requires multiple functions available, espesially split and flip. With these two handy, we
+      could break down triangles.</p>
+
+    <h2 align="middle">Section I: Bezier Curves and Surfaces</h2>
+
+    <h3 align="middle">Part 1: Bezier curves with 1D de Casteljau subdivision</h3>
+
+
+    <p> <b>de Casteljau Algorithm</b> is iteratively linearly interpolating the control points, and implementing this algorithm
+      I simply iterated on the i-1th, ith control point, i starting from 1 to n-1 and lerp it with the in class parameter t. <br>
+    </p>
+
+
+    <div align="middle">
+      <table style="width=100%">
+        <tr>
+          <td>
+            <img src="images/1-1.png" align="middle" width="400px" />
+            <figcaption align="middle">6 Control points.</figcaption>
+          </td>
+          <td>
+            <img src="images/1-2.png" align="middle" width="400px" />
+            <figcaption align="middle">1st iteration.</figcaption>
+          </td>
+        </tr>
+        <br>
+        <tr>
+          <td>
+            <img src="images/1-3.png" align="middle" width="400px" />
+            <figcaption align="middle">2nd iteration.</figcaption>
+          </td>
+          <td>
+            <img src="images/1-4.png" align="middle" width="400px" />
+            <figcaption align="middle">3rd iteration.</figcaption>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <div align="middle">
+        <table style="width=100%">
+            <tr>
+                <td>
+                    <img src="images/1-5.png" align="middle" width="400px" />
+                    <figcaption align="middle">4th iteration.</figcaption>
+                </td>
+                <td>
+                    <img src="images/1-6.png" align="middle" width="400px" />
+                    <figcaption align="middle">Final iteration and Bezier curve.</figcaption>
+                </td>
+            </tr>
+            <br />
+            <tr>
+                <td>
+                    <img src="images/1-7.png" align="middle" width="400px" />
+                    <figcaption align="middle">Modified control points.</figcaption>
+                </td>
+                <td>
+                    <img src="images/1-8.png" align="middle" width="400px" />
+                    <figcaption align="middle">Changing different t.</figcaption>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+
+    <h3 align="middle">Part 2: Bezier surfaces with separable 1D de Casteljau subdivision</h3>
+    <p> <b>de Casteljau 2D Algorithm</b> can be implemented by a pair (u, v). First, using u as the t parameter
+      we derive multiple points from the bezier curve, then using these points as the new control points 
+      we run a bezier curve at parameter v, then we get the point of the surface corresponding to (u, v).
+    </p>
+    <div align="middle">
+        <tr>
+            <td>
+                <img src="images/2-1.png" align="middle" width="400px" />
+                <figcaption align="middle">Teapot.</figcaption>
+            </td>
+        </tr>
+    </div>
+
+
+    <h2 align="middle">Section II: Sampling</h2>
+
+    <h3 align="middle">Part 3: Average normals for half-edge meshes</h3>
+    <p> Find all adjacent halfedges, twin especially, and get the 3 vertices. with the three vertices we can 
+      get the area by cross product (v2 - v1), (v1 - v0) and times the face normal. Then we just sum them up.
+      Finally we unit the length down to 1.
+    </p>
+    <div align="middle">
+        <tr>
+            <td>
+                <img src="images/3-1.png" align="middle" width="400px" />
+                <figcaption align="middle">Phong shading of teapot.</figcaption>
+            </td>
+        </tr>
+    </div>
+
+    <h3 align="middle">Part 4: Half-edge flip</h3>
+    <p> First we get some decent naming for all the adjacent halfedges, vertices, faces and edges. Then 
+      drawing down a picture and set the new neigboring conditions. <br>
+      <b>Debugging:</b> the major part is I keep on printing next->face, next->next->face and so on.
+    </p>
+    <div align="middle">
+        <tr>
+            <td>
+                <img src="images/4-1.png" align="middle" width="400px" />
+                <figcaption align="middle">Flipping some edges.</figcaption>
+            </td>
+        </tr>
+    </div>
+
+    <h3 align="middle">Part 5: Half-edge split</h3>
+    <p> The initialization process is similar to Part 4, and we just need to keep in mind the order of 
+        setting neighbors and overwrites. <br>
+        <b>Debugging</b> the order matters a lot and I often confuse them, took me a lot of time.
+    </p>
+
+
+    <div align="middle">
+      <table style="width=100%">
+        <tr>
+          <td>
+            <img src="images/5-1.png" align="middle" width="400px" />
+            <figcaption align="middle">Original</figcaption>
+          </td>
+          <td>
+            <img src="images/5-2.png" align="middle" width="400px" />
+            <figcaption align="middle">Splitted</figcaption>
+          </td>
+        </tr>
+        <br>
+        <tr>
+          <td>
+            <img src="images/5-3.png" align="middle" width="400px" />
+            <figcaption align="middle">Original.</figcaption>
+          </td>
+          <td>
+            <img src="images/5-4.png" align="middle" width="400px" />
+            <figcaption align="middle">Splitted and flipped.</figcaption>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+   
+
+    <h3 align="middle">Part 6: Loop subdivision for mesh upsampling</h3>
+    <p> Loop breaking algorithm is started by the simple part of triangle breaking, though the relevant
+      names, particularly the messy pointers, are very time-consuming. Then we carefully choose the correct 
+      edge to split and flip, then we copy the vertices.<br>
+        <b>Debugging</b> This part of debugging is much better than the last part. <br>
+      <b>Cube</b> can be made symmetric by splitting every edge on the faces into a cross, we can get a very
+      symmetric cube
+    </p>
+    <div align="middle">
+      <table style="width=100%">
+        <tr>
+          <td>
+            <img src="images/6-1.png" align="middle" width="400px" />
+            <figcaption align="middle">Torus.</figcaption>
+          </td>
+          <td>
+            <img src="images/6-2.png" align="middle" width="400px" />
+            <figcaption align="middle">1st iteration.</figcaption>
+          </td>
+        </tr>
+        <br>
+        <tr>
+          <td>
+            <img src="images/6-3.png" align="middle" width="400px" />
+            <figcaption align="middle">2nd iteration.</figcaption>
+          </td>
+          <td>
+            <img src="images/6-4.png" align="middle" width="400px" />
+            <figcaption align="middle">Original Cube.</figcaption>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <div align="middle">
+        <table style="width=100%">
+            <tr>
+                <td>
+                    <img src="images/6-5.png" align="middle" width="400px" />
+                    <figcaption align="middle">Cube 1st iteration.</figcaption>
+                </td>
+                <td>
+                    <img src="images/6-6.png" align="middle" width="400px" />
+                    <figcaption align="middle">Cube 2nd iteration.</figcaption>
+                </td>
+            </tr>
+            <br />
+            <tr>
+                <td>
+                    <img src="images/6-7.png" align="middle" width="400px" />
+                    <figcaption align="middle">Modified cube.</figcaption>
+                </td>
+                <td>
+                    <img src="images/6-8.png" align="middle" width="400px" />
+                    <figcaption align="middle">Modified cube 3rd iteration.</figcaption>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <h2 align="middle">Section III: Optional Extra Credit</h2>
+    <p>If you are not participating in the optional mesh competition, don't worry about this section!</p>
+
+    <h3 align="middle">Part 7: Design your own mesh!</h3>
+
+</body>
+
 </html>
