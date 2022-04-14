@@ -1,7 +1,191 @@
-<html>
-	<head>
-	</head>
-	<body>
-		Project 3-1 here
-	</body>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<style>
+    div.padded {
+      padding-top: 0px;
+      padding-right: 100px;
+      padding-bottom: 0.25in;
+      padding-left: 100px;
+    }
+  </style>
+<title>Tian Liu  |  CS 184</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="style.css" media="screen" />
+</head>
+<body>
+<br />
+<h1 align="middle">Assignment 3: PathTracer</h1>
+    <h2 align="middle">Tian Liu</h2>
+
+    <div class="padded">
+        <p>This project spec involves an overview of work done, featuring from part 1 to 5.</p>
+
+    <h2 align="middle">Part 1: Ray Generation and Intersection</h2>
+    <p>1. Pipeline. I'll begin with generating ray. In below diagram from lecture slide, we cast rays from the pinhole through
+        the image plane and then into the scene. The image plane rendered will be the output. In this part, for each pixel in the frame,
+        one camera ray is constructed and casted into the scene. If the ray intersects any objects, compute the color
+        of the object at the intersection point and assign the color to the corresponding pixel.<br>
+        2. Triangle Intersection. Check if the min, maxes match with our corresponding ray and triangle,
+        then we are able to update the intersection details, such that now we are able to check if,
+        the norm is updated. The most interesting part is regarding the norms, that we initially failed to
+        update the sequence of the norm, since the MT algorithm is different from the sequencing of the nodes
+        of the respective triangels.</p>
+        <div align="center">
+            <table style="width=100%">
+                <tr>
+                    <td align="middle">
+                    <img src="images/1-1.png" width="480px" />
+                    <figcaption align="middle">CBEmpty</figcaption>
+                </tr>
+                <tr>
+                    <td align="middle">
+                    <img src="images/1-2.png" width="480px" />
+                    <figcaption align="middle">CBSpheres</figcaption>
+                </tr>
+            </table>
+        </div>
+
+
+        <h2 align="middle">Part 2: Bounding Volume Hierarchy</h2>
+        <p>1. BVH Construction Pipeline: We started by the creating of new leaf nodes, then expand the corresponding bbox
+          as well as the centroid bbox. Then, we consider a careful split, and the function partition came to extreme effect
+          because I realised that the vectors would be thrown away should we close the current function frame. Hence, we can
+          only operate on the initial settings and change the sequence of corresponding iterators.<br></p>
+            <div align="center">
+                <table style="width=100%">
+                    <tr>
+                        <td align="middle">
+                        <img src="images/2-31.png" width="480px" />
+                        <figcaption align="middle">CBlucy</figcaption>
+                    </tr>
+                    <tr>
+                        <td align="middle">
+                        <img src="images/2-32.png" width="480px" />
+                        <figcaption align="middle">CBmaxplanck</figcaption>
+                    </tr>
+                </table>
+            </div>
+            <p>2. The speedup was not initially significant, coming from 40+s to 7s for the cow.dae, yet the greatest speedup came
+            from the moment that I reduced the line: <br> for (auto p : primitives) <br> and replace it by
+           <br> for (auto p = node.start; p != node.end; p++) <br> and this significantly reduced the
+            time to 0.172s for cow, and 0.45s for maxplanck. I believe the nuances would be i dont have to iterate over all the
+            respective primitves, rather, we only need to care if the node includes.</p>
+
+            <h2 align="middle">Part 3: Direct Illumination</h2>
+            <p>1. Direct Lighting Pipeline:For uniform hemisphere sampling, we sample the incident ray at a hit point randomly since we
+              don't know the position of the light source. If the ray intersects with some objects in the scene, we calculate how much
+              light is emitting from that intersection point and scale it to get its contribution to our primary ray (L_out, output ray
+              from hit point). If the incident ray doesn't intersect with any object, we skip it.<br></p>
+              <p>
+              2. Differences in Uniform and lighting:Using uniform hemisphere sampling and lighting sampling on Cbunny.dae. With the same number of samples,
+              hemisphere sampling is much more noisy than lighting sampling.</p>
+                <div align="center">
+                    <table style="width=100%">
+                        <tr>
+                            <td align="middle">
+                            <img src="images/3-1.png" width="480px" />
+                            <figcaption align="middle">Direct Lighting Bunny</figcaption>
+                        </tr>
+                        <tr>
+                            <td align="middle">
+                            <img src="images/3-2.png" width="480px" />
+                            <figcaption align="middle">Direct lighting Dragon.</figcaption>
+                        </tr>
+                        <tr>
+                            <td align="middle">
+                            <img src="images/3-3.png" width="480px" />
+                            <figcaption align="middle">Dragon, s = 1, l = 1</figcaption>
+                        </tr>
+                        <tr>
+                            <td align="middle">
+                            <img src="images/3-4.png" width="480px" />
+                            <figcaption align="middle">l = 4</figcaption>
+                        </tr>
+                        <tr>
+                            <td align="middle">
+                            <img src="images/3-5.png" width="480px" />
+                            <figcaption align="middle">l = 16</figcaption>
+                        </tr>
+                        <tr>
+                            <td align="middle">
+                            <img src="images/3-6.png" width="480px" />
+                            <figcaption align="middle">l = 64</figcaption>
+                        </tr>
+                    </table>
+                </div>
+                <p>
+                2. Differences in Uniform and lighting:Using uniform hemisphere sampling and lighting sampling on Cbunny.dae. With the same number of samples,
+                hemisphere sampling is much more noisy than lighting sampling.</p>
+
+                <h2 align="middle">Part 4: Global Illumination</h2>
+                <p>The function est_radiance_global_illumination is called to get an estimate of the total radiance with
+                  global illumination arriving at a point from a particular direction, e.g., on the image plane and going
+                  towards the image's center of projection. The function zero_bounce_radiance should return the results
+                  from no bounces of light, which is simply the light emitted by the given point along its
+                  outgoing direction. The pixel will be black unless it lies on a light. The function one_bounce_radianc
+                  e is the direct illumination that we have implemented in Part 3. We only need to call our direct
+                  lighting function according to the indicator direct_illumination_sample. Hence implementation of only
+                  at_leat_once is of importance.
+                  The function at_least_one_bounce_radiance calls one_bounce_radiance, and then recursively call itself to
+                  estimate the higher bounces. This recursive call takes one random sample from the bsdf at the hit point,
+                  trace a ray in that sample direction, and recursively call itself on the new hit point.<br></p>
+                  <p>
+                    <table style="width=100%">
+                        <tr>
+                            <td align="middle">
+                            <img src="images/4-1.png" width="480px" />
+                            <figcaption align="middle">Global lighting</figcaption>
+                        </tr>
+                        <tr>
+                            <td align="middle">
+                            <img src="images/4-2.png" width="480px" />
+                            <figcaption align="middle">direct only</figcaption>
+                        </tr>
+                        <tr>
+                            <td align="middle">
+                            <img src="images/4-1.png" width="480px" />
+                            <figcaption align="middle">indirect only</figcaption>
+                        </tr>
+                        <tr>
+                            <td align="middle">
+                            <img src="images/4-4.png" width="480px" />
+                            <figcaption align="middle">m = 0</figcaption>
+                        </tr>
+                        <tr>
+                            <td align="middle">
+                            <img src="images/4-3.png" width="480px" />
+                            <figcaption align="middle">m = 1</figcaption>
+                        </tr>
+                        <tr>
+                            <td align="middle">
+                            <img src="images/4-5.png" width="480px" />
+                            <figcaption align="middle">m = 2</figcaption>
+                        </tr>
+                        <tr>
+                            <td align="middle">
+                            <img src="images/4-6.png" width="480px" />
+                            <figcaption align="middle">m = 100</figcaption>
+                        </tr>
+                    </table>
+                    <h2 align="middle">Part 5: Adaptive</h2>
+                    <p> Check if I is less then or equal to maxTolerance * mu. We keep up updating
+                      sigma and simga_2, to check less or equal for the easiness of computation.
+                      If so, the pixel has converged and we break the loop
+                      . If not, we continue to sample more then check again in next batch until reach the maximum of s<br></p>
+                      <p>
+                        <table style="width=100%">
+                            <tr>
+                                <td align="middle">
+                                <img src="images/5-1.png" width="480px" />
+                                <figcaption align="middle">Bunny</figcaption>
+                            </tr>
+                            <tr>
+                                <td align="middle">
+                                <img src="images/5-2.png" width="480px" />
+                                <figcaption align="middle">Bunny rate</figcaption>
+                            </tr>
+                      </table>
+</div>
+</body>
 </html>

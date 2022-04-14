@@ -1,7 +1,142 @@
-<html>
-	<head>
-	</head>
-	<body>
-		Project 3-2 here
-	</body>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<style>  
+    div.padded {  
+      padding-top: 0px;  
+      padding-right: 100px;  
+      padding-bottom: 0.25in;  
+      padding-left: 100px;  
+    }  
+  </style> 
+<title>Tian Liu  |  CS 184</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="style.css" media="screen" />
+</head>
+<body>
+<br />
+<h1 align="middle">Assignment 3: PathTracer</h1>
+    <h2 align="middle">Tian Liu</h2>
+
+    <div class="padded">
+        <p>I've chosen Part 1 & 2 to be the completed section for this project </p>
+
+
+        <h2 align="middle">Part 1: Ray Generation and Intersection</h2>
+        <p>
+            The effects that causes the difference of m = 0, 1, 2, 3, 4, 5, 100 is explained as follow. <br />
+            For m = 0, only one ray, hence no reflect, no refract. <br />
+            For m = 1, the ray successfully hits on the ball with reflection, but refraction requires 2 bounces. <br />
+            Now m = 2, the refraction succeeded, but the reflection ray needs another iteration. <br />
+            At m = 3, we get the normal result from a real world view. And any more advancements are not visible to me.
+        </p>
+        <div align="middle">
+            <table style="width=100%">
+                <tr>
+                    <td>
+                        <img src="images/1-1.png" align="middle" width="400px" />
+                        <figcaption align="middle">m = 0. Total black sphere.</figcaption>
+                    </td>
+                    <td>
+                        <img src="images/1-2.png" align="middle" width="400px" />
+                        <figcaption align="middle">m = 1. Visible, but no refraction</figcaption>
+                    </td>
+                </tr>
+                <br />
+                <tr>
+                    <td>
+                        <img src="images/1-3.png" align="middle" width="400px" />
+                        <figcaption align="middle">m = 2. Has refraction, but the reflected refracted ball is still black.</figcaption>
+                    </td>
+                    <td>
+                        <img src="images/1-4.png" align="middle" width="400px" />
+                        <figcaption align="middle">m = 3. Reflected refracted ball is successfully transparent.</figcaption>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div align="middle">
+            <table style="width=100%">
+                <tr>
+                    <td>
+                        <img src="images/1-5.png" align="middle" width="400px" />
+                        <figcaption align="middle">m = 4. Similar to m = 3.</figcaption>
+                    </td>
+                    <td>
+                        <img src="images/1-6.png" align="middle" width="400px" />
+                        <figcaption align="middle">m = 5. Not much visible difference.</figcaption>
+                    </td>
+                </tr>
+                <br />
+                <tr>
+                    <td>
+                        <img src="images/1-7.png" align="middle" width="400px" />
+                        <figcaption align="middle">m = 100. Not much visible difference.</figcaption>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <h2 align="middle">Part 2: Microfacet Material</h2>
+        <p>
+            First, the effect of alpha on the dragons. As alpha increases, the dragons become much brighter
+            and the shining effects of the gold increases. <br />
+            Then for the bunnies, cosine hemisphere sampling produces a much more noisier image when compared 
+            to importance sampling.
+        </p>
+        <div align="middle">
+            <table style="width=100%">
+                <tr>
+                    <td>
+                        <img src="images/2-1.png" align="middle" width="400px" />
+                        <figcaption align="middle">a = 0.05.</figcaption>
+                    </td>
+                    <td>
+                        <img src="images/2-2.png" align="middle" width="400px" />
+                        <figcaption align="middle">a = 0.05.n</figcaption>
+                    </td>
+                </tr>
+                <br />
+                <tr>
+                    <td>
+                        <img src="images/2-3.png" align="middle" width="400px" />
+                        <figcaption align="middle">a = 0.25. </figcaption>
+                    </td>
+                    <td>
+                        <img src="images/2-4.png" align="middle" width="400px" />
+                        <figcaption align="middle">a = 0.5.</figcaption>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div align="middle">
+            <table style="width=100%">
+                <tr>
+                    <td>
+                        <img src="images/2-5.png" align="middle" width="400px" />
+                        <figcaption align="middle">Bunny default</figcaption>
+                    </td>
+                    <td>
+                        <img src="images/2-6.png" align="middle" width="400px" />
+                        <figcaption align="middle">Bunny with importance sampling</figcaption>
+                    </td>
+                </tr>
+                <br />
+                <tr>
+                    <td>
+                        <img src="images/2-7.png" align="middle" width="400px" />
+                        <figcaption align="middle">Silver dragon, with η = (0.059193, 0.059881, 0.047366), k = (4.1283, 3.5892, 2.8132)</figcaption>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+    </div>
+</body>
 </html>
+
+
+
+

@@ -1,7 +1,284 @@
-<html>
-	<head>
-	</head>
-	<body>
-		Project 4 here
-	</body>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<style>
+  body {
+    padding: 100px;
+    width: 1000px;
+    margin: auto;
+    text-align: left;
+    font-weight: 300;
+    font-family: 'Open Sans', sans-serif;
+    color: #121212;
+  }
+  h1, h2, h3, h4 {
+    font-family: 'Source Sans Pro', sans-serif;
+  }
+</style>
+<title>CS 184 Mesh Editor</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link href="https://fonts.googleapis.com/css?family=Open+Sans|Source+Sans+Pro" rel="stylesheet">
+</head>
+
+
+<body>
+
+<h1 align="middle">CS 184: Computer Graphics and Imaging, Spring 2022</h1>
+<h1 align="middle">Project 4: Cloth Simulator</h1>
+<h2 align="middle">Tian Liu</h2>
+
+<br><br>
+
+    <div>
+
+        <h2 align="middle">Overview</h2>
+        <p>
+            In this project, I've built a system of Cloth based on masses and strings, as well as their collisions
+            with different kind of objects. At last, I changed the shaders that enabled me to change the looks of the
+            simple system of cloth with balls, showing as an example.
+        </p>
+
+        <h2 align="middle">Part I: Masses and springs</h2>
+        <div align="middle">
+            <table style="width=100%">
+                <tr>
+                    <td>
+                        <img src="images/1-1.png" align="middle" width="400px" />
+                        <figcaption align="middle">Wire</figcaption>
+                    </td>
+                    <td>
+                        <img src="images/1-2.png" align="middle" width="400px" />
+                        <figcaption align="middle">Wire from another direction</figcaption>
+                    </td>
+                </tr>
+                <br />
+                <tr>
+                    <td>
+                        <img src="images/1-3.png" align="middle" width="400px" />
+                        <figcaption align="middle">No shearing</figcaption>
+                    </td>
+                    <td>
+                        <img src="images/1-4.png" align="middle" width="400px" />
+                        <figcaption align="middle">Only shearing</figcaption>
+                    </td>
+                </tr>
+            </table>
+            <table style="width=100%">
+                <tr>
+                    <td>
+                        <img src="images/1-2.png" align="middle" width="400px" />
+                        <figcaption align="middle">All constraints</figcaption>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <h2 align="middle">Part 2: Simulation via numerical integration</h2>
+        <div align="middle">
+            <table style="width=100%">
+                <tr>
+                    <td>
+                        <img src="images/2-1.png" align="middle" width="400px" />
+                        <figcaption align="middle">Final result</figcaption>
+                    </td>
+                    <td>
+                        <img src="images/2-2.png" align="middle" width="400px" />
+                        <figcaption align="middle">Small ks. The springs doesn't have much forces on its ends, so the cloth falls by gravity and stay still quickly. </figcaption>
+                    </td>
+                </tr>
+                <br />
+                <tr>
+                    <td>
+                        <img src="images/2-3.png" align="middle" width="400px" />
+                        <figcaption align="middle">Large ks. The spring has a lot of forces to act on both ends, which makes the cloth more "rigid" because the forces of the spring counters the effect of gravity, so the cloth doesn't fall but instead stay almost flat and keeps bouncing.</figcaption>
+                    </td>
+                    <td>
+                        <img src="images/2-4.png" align="middle" width="400px" />
+                        <figcaption align="middle">Small Density. The cloth is lighter so there're not many wrinkles on the surface because there's not much force caused by masses dragging the pinned points, also less dragged down.</figcaption>
+                    </td>
+                </tr>
+            </table>
+            <table style="width=100%">
+                <tr>
+                    <td>
+                        <img src="images/2-5.png" align="middle" width="400px" />
+                        <figcaption align="middle">Large Density. The cloth becomes heavier, so there're wrinkles on the surface. This is because the midpoint of each outer cloth edge is heavy so that it drags the pinned points, creating a curvier rim, hence more dragged down.</figcaption>
+                    </td>
+                    <td>
+                        <img src="images/2-6.png" align="middle" width="400px" />
+                        <figcaption align="middle">Small damping. The cloth keeps on bouncing, since no loss of energy due to friction.</figcaption>
+                    </td>
+                </tr>
+                <br />
+                <tr>
+                    <td>
+                        <img src="images/2-7.png" align="middle" width="400px" />
+                        <figcaption align="middle">Large damping.The cloth stables almost at an instant, it falls and stablizes.</figcaption>
+                    </td>
+                    <td>
+                        <img src="images/2-8.png" align="middle" width="400px" />
+                        <figcaption align="middle">Final resting stage for pinned4</figcaption>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <h2 align="middle">Part 3: Handling collision with other objects</h2>
+        <div align="middle">
+            <table style="width=100%">
+                <tr>
+                    <td>
+                        <img src="images/3-1.png" align="middle" width="400px" />
+                        <figcaption align="middle">Normal ks</figcaption>
+                    </td>
+                    <td>
+                        <img src="images/3-2.png" align="middle" width="400px" />
+                        <figcaption align="middle">Small ks.</figcaption>
+                    </td>
+                </tr>
+                <br />
+                <tr>
+                    <td>
+                        <img src="images/3-3.png" align="middle" width="400px" />
+                        <figcaption align="middle">Large ks.</figcaption>
+                    </td>
+                    <td>
+                        <img src="images/3-4.png" align="middle" width="400px" />
+                        <figcaption align="middle">Mirror shading, cloth on plane.</figcaption>
+                    </td>
+                </tr>
+            </table>
+            <p>
+                We can see that the higher the ks is, the more tension there is in the cloth, which prevents the bottom part from hanging vertically.
+                The tension from the springs drags the rim of the cloth to stay at an angled way. Hence, it looks more like
+                an umbrella with a large ks, while with ks close to zero, the rims are perfectly perpendicular to horizontal ground.
+            </p>
+        </div>
+        <h2 align="middle">Part 4: Handling self-collisions</h2>
+        <div align="middle">
+            <table style="width=100%">
+                <tr>
+                    <td>
+                        <img src="images/4-1.png" align="middle" width="400px" />
+                        <figcaption align="middle">Early fall</figcaption>
+                    </td>
+                    <td>
+                        <img src="images/4-2.png" align="middle" width="400px" />
+                        <figcaption align="middle">Midway.</figcaption>
+                    </td>
+                </tr>
+                <br />
+                <tr>
+                    <td>
+                        <img src="images/4-3.png" align="middle" width="400px" />
+                        <figcaption align="middle">Final State.</figcaption>
+                    </td>
+                    <td>
+                        <img src="images/4-4.png" align="middle" width="400px" />
+                        <figcaption align="middle">Large density.</figcaption>
+                    </td>
+                </tr>
+            </table>
+            <table style="width=100%">
+                <tr>
+                    <td>
+                        <img src="images/4-5.png" align="middle" width="400px" />
+                        <figcaption align="middle">Small density</figcaption>
+                    </td>
+                    <td>
+                        <img src="images/4-6.png" align="middle" width="400px" />
+                        <figcaption align="middle">Large ks.</figcaption>
+                    </td>
+                </tr>
+                <br />
+                <tr>
+                    <td>
+                        <img src="images/4-7.png" align="middle" width="400px" />
+                        <figcaption align="middle">Small ks.</figcaption>
+                    </td>
+                </tr>
+            </table>
+            <p>
+                With a much higher density, the cloth has more wrinkles when it comes to a rest state, since
+                the cloth is greater in density.
+                The lighter cloth will fall to the plane and become almost flat without
+                wrinkles.
+            </p>
+            <p>
+                With a much higher ks, there is more tension in the springs, so the cloth has
+                fewer but much bigger wrinkles comparing to the smaller ks cloth. It also
+                moves along the plane quite a lot because of the tension, so it keeps on bouncing
+                if the ks is substantially large.
+            </p>
+        </div>
+
+        <h2 align="middle">Part 5: Shaders</h2>
+        <p>
+            Shader programs are programs that runs in the rasterization pipeline which goes from 
+            inputs to outputs. In this project, we have 2 types of shaders. Vertex shaders take model-space
+            verteices inputs and transform vertices (positions, normals, etc.) to world space. Fragment 
+            shaders will then apply colors to create lighting & material effects given vertices position,
+            light information, etc. And with the combination of the two, following the pipeline, we get the 
+            desired rendering effects.
+        </p>
+        <p>
+            Blinn-Phong shading model is the shading model made up of 3 components: ambient, diffuse, and specular. <br>
+            Ambient: a constant lighting value that represents the general lights coming from the environment. <br>
+            Diffuse: the lights coming from light sources diffused by the material. <br>
+            Specular: the lights coming from light sources reflected by the material.
+        </p>
+            <div align="middle">
+                <table style="width=100%">
+                    <tr>
+                        <td>
+                            <img src="images/5-1.png" align="middle" width="400px" />
+                            <figcaption align="middle">Ambient</figcaption>
+                        </td>
+                        <td>
+                            <img src="images/5-2.png" align="middle" width="400px" />
+                            <figcaption align="middle">Diffuse.</figcaption>
+                        </td>
+                    </tr>
+                    <br />
+                    <tr>
+                        <td>
+                            <img src="images/5-3.png" align="middle" width="400px" />
+                            <figcaption align="middle">Specular.</figcaption>
+                        </td>
+                        <td>
+                            <img src="images/5-4.png" align="middle" width="400px" />
+                            <figcaption align="middle">Blinn-Phong.</figcaption>
+                        </td>
+                    </tr>
+                </table>
+                <table style="width=100%">
+                    <tr>
+                        <td>
+                            <img src="images/5-5.png" align="middle" width="400px" />
+                            <figcaption align="middle">Texture with BMW logo</figcaption>
+                        </td>
+                        <td>
+                            <img src="images/5-6.png" align="middle" width="400px" />
+                            <figcaption align="middle">Bump</figcaption>
+                        </td>
+                    </tr>
+                    <br />
+                    <tr>
+                        <td>
+                            <img src="images/5-7.png" align="middle" width="400px" />
+                            <figcaption align="middle">Displacement.</figcaption>
+                        </td>
+                        <td>
+                            <img src="images/5-8.png" align="middle" width="400px" />
+                            <figcaption align="middle">Mirror shading.</figcaption>
+                        </td>
+                    </tr>
+                </table>
+                <p>
+                    Bump mapping only shows the lighting of the texture (the height map) 
+                    but the cloth itself is still a thin sheet of cloth, which means no thickness. 
+                    Displacement mapping renders the lighting of the texture, and also modifies the vertices 
+                    positions according to the height map.
+                </p>
+            </div>
+        </p></div></body>
 </html>
